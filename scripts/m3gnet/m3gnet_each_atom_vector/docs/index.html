@@ -1,0 +1,1117 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>M3GNet &#8212; m3gnet  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <p><a class="reference external" href="https://github.com/materialsvirtuallab/m3gnet/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/materialsvirtuallab/m3gnet" /></a>
+<a class="reference external" href="https://github.com/materialsvirtuallab/m3gnet/workflows/Linting/badge.svg"><img alt="Linting" src="https://github.com/materialsvirtuallab/m3gnet/workflows/Linting/badge.svg" /></a>
+<a class="reference external" href="https://github.com/materialsvirtuallab/m3gnet/workflows/Testing/badge.svg"><img alt="Testing" src="https://github.com/materialsvirtuallab/m3gnet/workflows/Testing%20-%20main/badge.svg" /></a>
+<a class="reference external" href="https://pepy.tech/project/m3gnet"><img alt="Downloads" src="https://pepy.tech/badge/m3gnet" /></a></p>
+<section id="m3gnet">
+<h1>M3GNet<a class="headerlink" href="#m3gnet" title="Permalink to this headline">¶</a></h1>
+<p>M3GNet is a new materials graph neural network architecture that incorporates 3-body interactions. A key difference
+with prior materials graph implementations such as <a class="reference external" href="https://github.com/materialsvirtuallab/megnet">MEGNet</a> is the
+addition of the coordinates for atoms and the 3×3 lattice matrix in crystals, which are necessary for obtaining
+tensorial quantities such as forces and stresses via auto-differentiation.</p>
+<p>As a framework, M3GNet has diverse applications, including:</p>
+<ul class="simple">
+<li><p><strong>Interatomic potential development.</strong> With the same training data, M3GNet performs similarly to state-of-the-art
+machine learning interatomic potentials (ML-IAPs). However, a key feature of a graph representation is its
+flexibility to scale to diverse chemical spaces. One of the key accomplishments of M3GNet is the development of a
+<em>universal IAP</em> that can work across the entire periodic table of the elements by training on relaxations performed
+in the <a class="reference external" href="http://materialsproject.org">Materials Project</a>.</p></li>
+<li><p><strong>Surrogate models for property predictions.</strong> Like the previous MEGNet architecture, M3GNet can be used to develop
+surrogate models for property predictions, achieving in many cases accuracies that better or similar to other
+state-of-the-art ML models.</p></li>
+</ul>
+<p>For detailed performance benchmarks, please refer to the publication in the <span class="xref myst">References</span> section. The
+API documentation is available via the <a class="reference external" href="http://materialsvirtuallab.github.io/m3gnet">Github Page</a>.</p>
+</section>
+<section id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><span class="xref myst">System requirements</span></p></li>
+<li><p><span class="xref myst">Installation</span></p></li>
+<li><p><span class="xref myst">Change Log</span></p></li>
+<li><p><span class="xref myst">Usage</span></p></li>
+<li><p><span class="xref myst">Model training</span></p></li>
+<li><p><span class="xref myst">Matterverse</span></p></li>
+<li><p><span class="xref myst">API docs</span></p></li>
+<li><p><span class="xref myst">Datasets</span></p></li>
+<li><p><span class="xref myst">References</span></p></li>
+</ul>
+</section>
+<section id="system-requirements">
+<h1>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h1>
+<p>Inferences using the pre-trained models can be ran on any standard computer. For model training, the GPU memory needs
+to be &gt; 18 Gb for a batch size of 32 using the crystal training data. In our work, we used a single RTX 3090
+GPU for model training.</p>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>M3GNet can be installed via pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">m3gnet</span>
+</pre></div>
+</div>
+<p>You can also directly download the source from Github and install from source.</p>
+<section id="apple-silicon-installation">
+<h2>Apple Silicon Installation<a class="headerlink" href="#apple-silicon-installation" title="Permalink to this headline">¶</a></h2>
+<p>Apple Silicon (M1, M1 Pro, M1 Max, M1 Ultra) has extremely powerful ML capabilities, but special steps are needed for
+the installation of tensorflow and other dependencies. Here are the recommended installation steps.</p>
+<ol class="arabic">
+<li><p>Ensure that you already have XCode and CLI installed.</p></li>
+<li><p>Install Miniconda or Anaconda.</p></li>
+<li><p>Create a Python 3.9 environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name m3gnet <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+conda activate m3gnet
+</pre></div>
+</div>
+</li>
+<li><p>First install tensorflow and its dependencies for Apple Silicon.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c apple tensorflow-deps
+pip install tensorflow-macos
+</pre></div>
+</div>
+</li>
+<li><p>If you wish, you can install <code class="docutils literal notranslate"><span class="pre">tensorflow-metal</span></code>, which helps speed up training. If you encounter strange tensorflow
+errors, you should uninstall <code class="docutils literal notranslate"><span class="pre">tensorflow-metal</span></code> and see if it fixes the errors first.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install tensorflow-metal
+</pre></div>
+</div>
+</li>
+<li><p>Install m3gnet but ignore dependencies (otherwise, pip will look for tensorflow).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --no-deps m3gnet
+</pre></div>
+</div>
+</li>
+<li><p>Install other dependencies like pymatgen, etc. manually.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install <span class="nv">protobuf</span><span class="o">==</span><span class="m">3</span>.20.0 pymatgen ase cython
+</pre></div>
+</div>
+</li>
+<li><p>Once you are done, you can try running <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">m3gnet</span></code> to see if all tests pass.</p></li>
+</ol>
+</section>
+</section>
+<section id="change-log">
+<h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
+<p>See <span class="xref myst">change log</span></p>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<section id="structure-relaxation">
+<h2>Structure relaxation<a class="headerlink" href="#structure-relaxation" title="Permalink to this headline">¶</a></h2>
+<p>A M3Gnet universal potential for the periodic table has been developed using data from Materials Project relaxations
+since 2012. This universal potential can be used to perform structural relaxation of any arbitrary crystal as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">m3gnet.models</span> <span class="kn">import</span> <span class="n">Relaxer</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">Structure</span>
+
+<span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="p">(</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">):</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s2">&quot;tensorflow&quot;</span><span class="p">)</span>
+
+<span class="c1"># Init a Mo structure with stretched lattice (DFT lattice constant ~ 3.168)</span>
+<span class="n">mo</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">Lattice</span><span class="o">.</span><span class="n">cubic</span><span class="p">(</span><span class="mf">3.3</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Mo&quot;</span><span class="p">,</span> <span class="s2">&quot;Mo&quot;</span><span class="p">],</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="n">relaxer</span> <span class="o">=</span> <span class="n">Relaxer</span><span class="p">()</span>  <span class="c1"># This loads the default pre-trained model</span>
+
+<span class="n">relax_results</span> <span class="o">=</span> <span class="n">relaxer</span><span class="o">.</span><span class="n">relax</span><span class="p">(</span><span class="n">mo</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">final_structure</span> <span class="o">=</span> <span class="n">relax_results</span><span class="p">[</span><span class="s1">&#39;final_structure&#39;</span><span class="p">]</span>
+<span class="n">final_energy_per_atom</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">relax_results</span><span class="p">[</span><span class="s1">&#39;trajectory&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">mo</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Relaxed lattice parameter is </span><span class="si">{</span><span class="n">final_structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">abc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> Å&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final energy is </span><span class="si">{</span><span class="n">final_energy_per_atom</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> eV/atom&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output is as follows:</p>
+<div class="highlight-txt notranslate"><div class="highlight"><pre><span></span>Relaxed lattice parameter is  3.169 Å
+Final energy is -10.859 eV/atom
+</pre></div>
+</div>
+<p>The initial lattice parameter of 3.3 Å was successfully relaxed to 3.169 Å, close to the DFT value of 3.168 Å. The
+final energy -10.859 eV/atom is also close to Materials Project DFT value of
+<a class="reference external" href="http://materialsproject.org/materials/mp-129/">-10.8456 eV/atom</a>.</p>
+<p>The relaxation takes less than 20 seconds on a single laptop.</p>
+<p>The table below provides more comprehensive benchmarks for cubic crystals based on
+<a class="reference external" href="http://en.wikipedia.org/wiki/Lattice_constant">exp data on Wikipedia</a> and MP DFT data. The
+<span class="xref myst">Jupyter notebook</span> is in the <span class="xref myst">examples</span> folder. This benchmark is
+limited to cubic crystals for ease of comparison since there is only one lattice parameter. Of course, M3GNet is not
+limited to cubic systems (see <span class="xref myst">LiFePO4 example</span>).</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-left head"><p>Material</p></th>
+<th class="text-left head"><p>Crystal structure</p></th>
+<th class="text-right head"><p>a (Å)</p></th>
+<th class="text-right head"><p>MP a (Å)</p></th>
+<th class="text-right head"><p>M3GNet a (Å)</p></th>
+<th class="text-left head"><p>% error vs Expt</p></th>
+<th class="text-left head"><p>% error vs MP</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Ac</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.31</p></td>
+<td class="text-right"><p>5.66226</p></td>
+<td class="text-right"><p>5.6646</p></td>
+<td class="text-left"><p>6.68%</p></td>
+<td class="text-left"><p>0.04%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ag</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>4.079</p></td>
+<td class="text-right"><p>4.16055</p></td>
+<td class="text-right"><p>4.16702</p></td>
+<td class="text-left"><p>2.16%</p></td>
+<td class="text-left"><p>0.16%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Al</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>4.046</p></td>
+<td class="text-right"><p>4.03893</p></td>
+<td class="text-right"><p>4.04108</p></td>
+<td class="text-left"><p>-0.12%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>AlAs</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.6605</p></td>
+<td class="text-right"><p>5.73376</p></td>
+<td class="text-right"><p>5.73027</p></td>
+<td class="text-left"><p>1.23%</p></td>
+<td class="text-left"><p>-0.06%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>AlP</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.451</p></td>
+<td class="text-right"><p>5.50711</p></td>
+<td class="text-right"><p>5.50346</p></td>
+<td class="text-left"><p>0.96%</p></td>
+<td class="text-left"><p>-0.07%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>AlSb</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.1355</p></td>
+<td class="text-right"><p>6.23376</p></td>
+<td class="text-right"><p>6.22817</p></td>
+<td class="text-left"><p>1.51%</p></td>
+<td class="text-left"><p>-0.09%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ar</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.26</p></td>
+<td class="text-right"><p>5.64077</p></td>
+<td class="text-right"><p>5.62745</p></td>
+<td class="text-left"><p>6.99%</p></td>
+<td class="text-left"><p>-0.24%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Au</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>4.065</p></td>
+<td class="text-right"><p>4.17129</p></td>
+<td class="text-right"><p>4.17431</p></td>
+<td class="text-left"><p>2.69%</p></td>
+<td class="text-left"><p>0.07%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>BN</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>3.615</p></td>
+<td class="text-right"><p>3.626</p></td>
+<td class="text-right"><p>3.62485</p></td>
+<td class="text-left"><p>0.27%</p></td>
+<td class="text-left"><p>-0.03%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>BP</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>4.538</p></td>
+<td class="text-right"><p>4.54682</p></td>
+<td class="text-right"><p>4.54711</p></td>
+<td class="text-left"><p>0.20%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ba</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>5.02</p></td>
+<td class="text-right"><p>5.0303</p></td>
+<td class="text-right"><p>5.03454</p></td>
+<td class="text-left"><p>0.29%</p></td>
+<td class="text-left"><p>0.08%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>C (diamond)</p></td>
+<td class="text-left"><p>Diamond (FCC)</p></td>
+<td class="text-right"><p>3.567</p></td>
+<td class="text-right"><p>3.57371</p></td>
+<td class="text-right"><p>3.5718</p></td>
+<td class="text-left"><p>0.13%</p></td>
+<td class="text-left"><p>-0.05%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ca</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.58</p></td>
+<td class="text-right"><p>5.50737</p></td>
+<td class="text-right"><p>5.52597</p></td>
+<td class="text-left"><p>-0.97%</p></td>
+<td class="text-left"><p>0.34%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>CaVO3</p></td>
+<td class="text-left"><p>Cubic perovskite</p></td>
+<td class="text-right"><p>3.767</p></td>
+<td class="text-right"><p>3.83041</p></td>
+<td class="text-right"><p>3.83451</p></td>
+<td class="text-left"><p>1.79%</p></td>
+<td class="text-left"><p>0.11%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>CdS</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.832</p></td>
+<td class="text-right"><p>5.94083</p></td>
+<td class="text-right"><p>5.9419</p></td>
+<td class="text-left"><p>1.88%</p></td>
+<td class="text-left"><p>0.02%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>CdSe</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.05</p></td>
+<td class="text-right"><p>6.21283</p></td>
+<td class="text-right"><p>6.20987</p></td>
+<td class="text-left"><p>2.64%</p></td>
+<td class="text-left"><p>-0.05%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>CdTe</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.482</p></td>
+<td class="text-right"><p>6.62905</p></td>
+<td class="text-right"><p>6.62619</p></td>
+<td class="text-left"><p>2.22%</p></td>
+<td class="text-left"><p>-0.04%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ce</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.16</p></td>
+<td class="text-right"><p>4.72044</p></td>
+<td class="text-right"><p>4.71921</p></td>
+<td class="text-left"><p>-8.54%</p></td>
+<td class="text-left"><p>-0.03%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cr</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>2.88</p></td>
+<td class="text-right"><p>2.87403</p></td>
+<td class="text-right"><p>2.84993</p></td>
+<td class="text-left"><p>-1.04%</p></td>
+<td class="text-left"><p>-0.84%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>CrN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.149</p></td>
+<td class="text-right"><p>-</p></td>
+<td class="text-right"><p>4.16068</p></td>
+<td class="text-left"><p>0.28%</p></td>
+<td class="text-left"><p>-</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cs</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>6.05</p></td>
+<td class="text-right"><p>6.11004</p></td>
+<td class="text-right"><p>5.27123</p></td>
+<td class="text-left"><p>-12.87%</p></td>
+<td class="text-left"><p>-13.73%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>CsCl</p></td>
+<td class="text-left"><p>Caesium chloride</p></td>
+<td class="text-right"><p>4.123</p></td>
+<td class="text-right"><p>4.20906</p></td>
+<td class="text-right"><p>4.20308</p></td>
+<td class="text-left"><p>1.94%</p></td>
+<td class="text-left"><p>-0.14%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>CsF</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.02</p></td>
+<td class="text-right"><p>6.11801</p></td>
+<td class="text-right"><p>6.1265</p></td>
+<td class="text-left"><p>1.77%</p></td>
+<td class="text-left"><p>0.14%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>CsI</p></td>
+<td class="text-left"><p>Caesium chloride</p></td>
+<td class="text-right"><p>4.567</p></td>
+<td class="text-right"><p>4.66521</p></td>
+<td class="text-right"><p>4.90767</p></td>
+<td class="text-left"><p>7.46%</p></td>
+<td class="text-left"><p>5.20%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Cu</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.597</p></td>
+<td class="text-right"><p>3.62126</p></td>
+<td class="text-right"><p>3.61199</p></td>
+<td class="text-left"><p>0.42%</p></td>
+<td class="text-left"><p>-0.26%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Eu</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>4.61</p></td>
+<td class="text-right"><p>4.63903</p></td>
+<td class="text-right"><p>4.34783</p></td>
+<td class="text-left"><p>-5.69%</p></td>
+<td class="text-left"><p>-6.28%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>EuTiO3</p></td>
+<td class="text-left"><p>Cubic perovskite</p></td>
+<td class="text-right"><p>7.81</p></td>
+<td class="text-right"><p>3.96119</p></td>
+<td class="text-right"><p>3.92943</p></td>
+<td class="text-left"><p>-49.69%</p></td>
+<td class="text-left"><p>-0.80%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Fe</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>2.856</p></td>
+<td class="text-right"><p>2.84005</p></td>
+<td class="text-right"><p>2.85237</p></td>
+<td class="text-left"><p>-0.13%</p></td>
+<td class="text-left"><p>0.43%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>GaAs</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.653</p></td>
+<td class="text-right"><p>5.75018</p></td>
+<td class="text-right"><p>5.75055</p></td>
+<td class="text-left"><p>1.73%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>GaP</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.4505</p></td>
+<td class="text-right"><p>5.5063</p></td>
+<td class="text-right"><p>5.5054</p></td>
+<td class="text-left"><p>1.01%</p></td>
+<td class="text-left"><p>-0.02%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>GaSb</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.0959</p></td>
+<td class="text-right"><p>6.21906</p></td>
+<td class="text-right"><p>6.21939</p></td>
+<td class="text-left"><p>2.03%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ge</p></td>
+<td class="text-left"><p>Diamond (FCC)</p></td>
+<td class="text-right"><p>5.658</p></td>
+<td class="text-right"><p>5.76286</p></td>
+<td class="text-right"><p>5.7698</p></td>
+<td class="text-left"><p>1.98%</p></td>
+<td class="text-left"><p>0.12%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>HfC0.99</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.64</p></td>
+<td class="text-right"><p>4.65131</p></td>
+<td class="text-right"><p>4.65023</p></td>
+<td class="text-left"><p>0.22%</p></td>
+<td class="text-left"><p>-0.02%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>HfN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.392</p></td>
+<td class="text-right"><p>4.53774</p></td>
+<td class="text-right"><p>4.53838</p></td>
+<td class="text-left"><p>3.33%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>InAs</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.0583</p></td>
+<td class="text-right"><p>6.18148</p></td>
+<td class="text-right"><p>6.25374</p></td>
+<td class="text-left"><p>3.23%</p></td>
+<td class="text-left"><p>1.17%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>InP</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.869</p></td>
+<td class="text-right"><p>5.95673</p></td>
+<td class="text-right"><p>5.9679</p></td>
+<td class="text-left"><p>1.69%</p></td>
+<td class="text-left"><p>0.19%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>InSb</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>6.479</p></td>
+<td class="text-right"><p>6.63322</p></td>
+<td class="text-right"><p>6.63863</p></td>
+<td class="text-left"><p>2.46%</p></td>
+<td class="text-left"><p>0.08%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ir</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.84</p></td>
+<td class="text-right"><p>3.87573</p></td>
+<td class="text-right"><p>3.87716</p></td>
+<td class="text-left"><p>0.97%</p></td>
+<td class="text-left"><p>0.04%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>K</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>5.23</p></td>
+<td class="text-right"><p>5.26212</p></td>
+<td class="text-right"><p>5.4993</p></td>
+<td class="text-left"><p>5.15%</p></td>
+<td class="text-left"><p>4.51%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>KBr</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.6</p></td>
+<td class="text-right"><p>6.70308</p></td>
+<td class="text-right"><p>6.70797</p></td>
+<td class="text-left"><p>1.64%</p></td>
+<td class="text-left"><p>0.07%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>KCl</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.29</p></td>
+<td class="text-right"><p>6.38359</p></td>
+<td class="text-right"><p>6.39634</p></td>
+<td class="text-left"><p>1.69%</p></td>
+<td class="text-left"><p>0.20%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>KF</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.34</p></td>
+<td class="text-right"><p>5.42398</p></td>
+<td class="text-right"><p>5.41971</p></td>
+<td class="text-left"><p>1.49%</p></td>
+<td class="text-left"><p>-0.08%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>KI</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>7.07</p></td>
+<td class="text-right"><p>7.18534</p></td>
+<td class="text-right"><p>7.18309</p></td>
+<td class="text-left"><p>1.60%</p></td>
+<td class="text-left"><p>-0.03%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>KTaO3</p></td>
+<td class="text-left"><p>Cubic perovskite</p></td>
+<td class="text-right"><p>3.9885</p></td>
+<td class="text-right"><p>4.03084</p></td>
+<td class="text-right"><p>4.03265</p></td>
+<td class="text-left"><p>1.11%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Kr</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.72</p></td>
+<td class="text-right"><p>6.49646</p></td>
+<td class="text-right"><p>6.25924</p></td>
+<td class="text-left"><p>9.43%</p></td>
+<td class="text-left"><p>-3.65%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Li</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.49</p></td>
+<td class="text-right"><p>3.42682</p></td>
+<td class="text-right"><p>3.41891</p></td>
+<td class="text-left"><p>-2.04%</p></td>
+<td class="text-left"><p>-0.23%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>LiBr</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.5</p></td>
+<td class="text-right"><p>5.51343</p></td>
+<td class="text-right"><p>5.51076</p></td>
+<td class="text-left"><p>0.20%</p></td>
+<td class="text-left"><p>-0.05%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>LiCl</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.14</p></td>
+<td class="text-right"><p>5.15275</p></td>
+<td class="text-right"><p>5.14745</p></td>
+<td class="text-left"><p>0.15%</p></td>
+<td class="text-left"><p>-0.10%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>LiF</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.03</p></td>
+<td class="text-right"><p>4.08343</p></td>
+<td class="text-right"><p>4.08531</p></td>
+<td class="text-left"><p>1.37%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>LiI</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.01</p></td>
+<td class="text-right"><p>6.0257</p></td>
+<td class="text-right"><p>6.02709</p></td>
+<td class="text-left"><p>0.28%</p></td>
+<td class="text-left"><p>0.02%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>MgO</p></td>
+<td class="text-left"><p>Halite (FCC)</p></td>
+<td class="text-right"><p>4.212</p></td>
+<td class="text-right"><p>4.25648</p></td>
+<td class="text-right"><p>4.2567</p></td>
+<td class="text-left"><p>1.06%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Mo</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.142</p></td>
+<td class="text-right"><p>3.16762</p></td>
+<td class="text-right"><p>3.16937</p></td>
+<td class="text-left"><p>0.87%</p></td>
+<td class="text-left"><p>0.06%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Na</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>4.23</p></td>
+<td class="text-right"><p>4.17262</p></td>
+<td class="text-right"><p>4.19684</p></td>
+<td class="text-left"><p>-0.78%</p></td>
+<td class="text-left"><p>0.58%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>NaBr</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.97</p></td>
+<td class="text-right"><p>6.0276</p></td>
+<td class="text-right"><p>6.01922</p></td>
+<td class="text-left"><p>0.82%</p></td>
+<td class="text-left"><p>-0.14%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>NaCl</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.64</p></td>
+<td class="text-right"><p>5.69169</p></td>
+<td class="text-right"><p>5.69497</p></td>
+<td class="text-left"><p>0.97%</p></td>
+<td class="text-left"><p>0.06%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>NaF</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.63</p></td>
+<td class="text-right"><p>4.69625</p></td>
+<td class="text-right"><p>4.69553</p></td>
+<td class="text-left"><p>1.42%</p></td>
+<td class="text-left"><p>-0.02%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>NaI</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.47</p></td>
+<td class="text-right"><p>6.532</p></td>
+<td class="text-right"><p>6.52739</p></td>
+<td class="text-left"><p>0.89%</p></td>
+<td class="text-left"><p>-0.07%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Nb</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.3008</p></td>
+<td class="text-right"><p>3.32052</p></td>
+<td class="text-right"><p>3.32221</p></td>
+<td class="text-left"><p>0.65%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>NbN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.392</p></td>
+<td class="text-right"><p>4.45247</p></td>
+<td class="text-right"><p>4.45474</p></td>
+<td class="text-left"><p>1.43%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ne</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>4.43</p></td>
+<td class="text-right"><p>4.30383</p></td>
+<td class="text-right"><p>6.95744</p></td>
+<td class="text-left"><p>57.05%</p></td>
+<td class="text-left"><p>61.66%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ni</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.499</p></td>
+<td class="text-right"><p>3.5058</p></td>
+<td class="text-right"><p>3.5086</p></td>
+<td class="text-left"><p>0.27%</p></td>
+<td class="text-left"><p>0.08%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pb</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>4.92</p></td>
+<td class="text-right"><p>5.05053</p></td>
+<td class="text-right"><p>5.02849</p></td>
+<td class="text-left"><p>2.21%</p></td>
+<td class="text-left"><p>-0.44%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>PbS</p></td>
+<td class="text-left"><p>Halite (FCC)</p></td>
+<td class="text-right"><p>5.9362</p></td>
+<td class="text-right"><p>6.00645</p></td>
+<td class="text-right"><p>6.01752</p></td>
+<td class="text-left"><p>1.37%</p></td>
+<td class="text-left"><p>0.18%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>PbTe</p></td>
+<td class="text-left"><p>Halite (FCC)</p></td>
+<td class="text-right"><p>6.462</p></td>
+<td class="text-right"><p>6.56567</p></td>
+<td class="text-right"><p>6.56111</p></td>
+<td class="text-left"><p>1.53%</p></td>
+<td class="text-left"><p>-0.07%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Pd</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.859</p></td>
+<td class="text-right"><p>3.95707</p></td>
+<td class="text-right"><p>3.95466</p></td>
+<td class="text-left"><p>2.48%</p></td>
+<td class="text-left"><p>-0.06%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pt</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.912</p></td>
+<td class="text-right"><p>3.97677</p></td>
+<td class="text-right"><p>3.97714</p></td>
+<td class="text-left"><p>1.67%</p></td>
+<td class="text-left"><p>0.01%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Rb</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>5.59</p></td>
+<td class="text-right"><p>5.64416</p></td>
+<td class="text-right"><p>5.63235</p></td>
+<td class="text-left"><p>0.76%</p></td>
+<td class="text-left"><p>-0.21%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>RbBr</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.89</p></td>
+<td class="text-right"><p>7.02793</p></td>
+<td class="text-right"><p>6.98219</p></td>
+<td class="text-left"><p>1.34%</p></td>
+<td class="text-left"><p>-0.65%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>RbCl</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>6.59</p></td>
+<td class="text-right"><p>6.69873</p></td>
+<td class="text-right"><p>6.67994</p></td>
+<td class="text-left"><p>1.36%</p></td>
+<td class="text-left"><p>-0.28%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>RbF</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>5.65</p></td>
+<td class="text-right"><p>5.73892</p></td>
+<td class="text-right"><p>5.76843</p></td>
+<td class="text-left"><p>2.10%</p></td>
+<td class="text-left"><p>0.51%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>RbI</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>7.35</p></td>
+<td class="text-right"><p>7.48785</p></td>
+<td class="text-right"><p>7.61756</p></td>
+<td class="text-left"><p>3.64%</p></td>
+<td class="text-left"><p>1.73%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Rh</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>3.8</p></td>
+<td class="text-right"><p>3.8439</p></td>
+<td class="text-right"><p>3.84935</p></td>
+<td class="text-left"><p>1.30%</p></td>
+<td class="text-left"><p>0.14%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ScN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.52</p></td>
+<td class="text-right"><p>4.51831</p></td>
+<td class="text-right"><p>4.51797</p></td>
+<td class="text-left"><p>-0.04%</p></td>
+<td class="text-left"><p>-0.01%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Si</p></td>
+<td class="text-left"><p>Diamond (FCC)</p></td>
+<td class="text-right"><p>5.43102</p></td>
+<td class="text-right"><p>5.46873</p></td>
+<td class="text-right"><p>5.45002</p></td>
+<td class="text-left"><p>0.35%</p></td>
+<td class="text-left"><p>-0.34%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Sr</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>6.08</p></td>
+<td class="text-right"><p>6.02253</p></td>
+<td class="text-right"><p>6.04449</p></td>
+<td class="text-left"><p>-0.58%</p></td>
+<td class="text-left"><p>0.36%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>SrTiO3</p></td>
+<td class="text-left"><p>Cubic perovskite</p></td>
+<td class="text-right"><p>3.98805</p></td>
+<td class="text-right"><p>3.94513</p></td>
+<td class="text-right"><p>3.94481</p></td>
+<td class="text-left"><p>-1.08%</p></td>
+<td class="text-left"><p>-0.01%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>SrVO3</p></td>
+<td class="text-left"><p>Cubic perovskite</p></td>
+<td class="text-right"><p>3.838</p></td>
+<td class="text-right"><p>3.90089</p></td>
+<td class="text-right"><p>3.90604</p></td>
+<td class="text-left"><p>1.77%</p></td>
+<td class="text-left"><p>0.13%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Ta</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.3058</p></td>
+<td class="text-right"><p>3.32229</p></td>
+<td class="text-right"><p>3.31741</p></td>
+<td class="text-left"><p>0.35%</p></td>
+<td class="text-left"><p>-0.15%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>TaC0.99</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.456</p></td>
+<td class="text-right"><p>4.48208</p></td>
+<td class="text-right"><p>4.48225</p></td>
+<td class="text-left"><p>0.59%</p></td>
+<td class="text-left"><p>0.00%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Th</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.08</p></td>
+<td class="text-right"><p>5.04122</p></td>
+<td class="text-right"><p>5.04483</p></td>
+<td class="text-left"><p>-0.69%</p></td>
+<td class="text-left"><p>0.07%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>TiC</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.328</p></td>
+<td class="text-right"><p>4.33565</p></td>
+<td class="text-right"><p>4.33493</p></td>
+<td class="text-left"><p>0.16%</p></td>
+<td class="text-left"><p>-0.02%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>TiN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.249</p></td>
+<td class="text-right"><p>4.25353</p></td>
+<td class="text-right"><p>4.25254</p></td>
+<td class="text-left"><p>0.08%</p></td>
+<td class="text-left"><p>-0.02%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>V</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.0399</p></td>
+<td class="text-right"><p>2.99254</p></td>
+<td class="text-right"><p>2.99346</p></td>
+<td class="text-left"><p>-1.53%</p></td>
+<td class="text-left"><p>0.03%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>VC0.97</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.166</p></td>
+<td class="text-right"><p>4.16195</p></td>
+<td class="text-right"><p>4.16476</p></td>
+<td class="text-left"><p>-0.03%</p></td>
+<td class="text-left"><p>0.07%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>VN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.136</p></td>
+<td class="text-right"><p>4.12493</p></td>
+<td class="text-right"><p>4.1281</p></td>
+<td class="text-left"><p>-0.19%</p></td>
+<td class="text-left"><p>0.08%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>W</p></td>
+<td class="text-left"><p>BCC</p></td>
+<td class="text-right"><p>3.155</p></td>
+<td class="text-right"><p>3.18741</p></td>
+<td class="text-right"><p>3.18826</p></td>
+<td class="text-left"><p>1.05%</p></td>
+<td class="text-left"><p>0.03%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Xe</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>6.2</p></td>
+<td class="text-right"><p>6.66148</p></td>
+<td class="text-right"><p>7.06991</p></td>
+<td class="text-left"><p>14.03%</p></td>
+<td class="text-left"><p>6.13%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Yb</p></td>
+<td class="text-left"><p>FCC</p></td>
+<td class="text-right"><p>5.49</p></td>
+<td class="text-right"><p>5.44925</p></td>
+<td class="text-right"><p>5.45807</p></td>
+<td class="text-left"><p>-0.58%</p></td>
+<td class="text-left"><p>0.16%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ZnO</p></td>
+<td class="text-left"><p>Halite (FCC)</p></td>
+<td class="text-right"><p>4.58</p></td>
+<td class="text-right"><p>4.33888</p></td>
+<td class="text-right"><p>4.33424</p></td>
+<td class="text-left"><p>-5.37%</p></td>
+<td class="text-left"><p>-0.11%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ZnS</p></td>
+<td class="text-left"><p>Zinc blende (FCC)</p></td>
+<td class="text-right"><p>5.42</p></td>
+<td class="text-right"><p>5.45027</p></td>
+<td class="text-right"><p>5.45297</p></td>
+<td class="text-left"><p>0.61%</p></td>
+<td class="text-left"><p>0.05%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>ZrC0.97</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.698</p></td>
+<td class="text-right"><p>4.72434</p></td>
+<td class="text-right"><p>4.72451</p></td>
+<td class="text-left"><p>0.56%</p></td>
+<td class="text-left"><p>0.00%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ZrN</p></td>
+<td class="text-left"><p>Halite</p></td>
+<td class="text-right"><p>4.577</p></td>
+<td class="text-right"><p>4.61762</p></td>
+<td class="text-right"><p>4.61602</p></td>
+<td class="text-left"><p>0.85%</p></td>
+<td class="text-left"><p>-0.03%</p></td>
+</tr>
+</tbody>
+</table>
+<p>From the table, it can be observed that almost all M3GNet-relaxed cubic lattice constants are within 1% of the DFT
+values. The only major errors are with EuTiO3, iodides (RbI and CsI) and the noble gases. It is quite likely the
+Wikipedia value for EuTiO3 is wrong by a factor of  2 and the lower than expected accuracy on iodides and noble gases
+may be due to the paucity of data in these chemical systems. It should be noted that M3GNet is expected to reproduce
+the MP DFT value and not the experimental values, which are only provided as an additional point of reference.</p>
+<p>All relaxations take less than 1s on a M1 Max Mac.</p>
+<section id="cli-tool">
+<h3>CLI tool<a class="headerlink" href="#cli-tool" title="Permalink to this headline">¶</a></h3>
+<p>A simple CLI tool has been written. Right now, it supports just doing structure relaxations with M3GNet, which is
+immediately useful for quick testing of the capabilities of M3GNet itself. More features will be developed in future if
+there is user interest. Examples below.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>m3g relax --infile Li2O.cif  <span class="c1"># Outputs to stdout the relaxed structure.</span>
+m3g relax --infile Li2O.cif --outfile Li2O_relaxed.cif  <span class="c1"># Outputs to a file the relaxed structure.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="molecular-dynamics">
+<h2>Molecular dynamics<a class="headerlink" href="#molecular-dynamics" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, the universal IAP can be used to perform molecular dynamics (MD) simulations as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Lattice</span>
+<span class="kn">from</span> <span class="nn">m3gnet.models</span> <span class="kn">import</span> <span class="n">MolecularDynamics</span>
+
+<span class="c1"># Init a Mo structure with stretched lattice (DFT lattice constant ~ 3.168)</span>
+<span class="n">mo</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">Lattice</span><span class="o">.</span><span class="n">cubic</span><span class="p">(</span><span class="mf">3.3</span><span class="p">),</span>
+               <span class="p">[</span><span class="s2">&quot;Mo&quot;</span><span class="p">,</span> <span class="s2">&quot;Mo&quot;</span><span class="p">],</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+<span class="n">md</span> <span class="o">=</span> <span class="n">MolecularDynamics</span><span class="p">(</span>
+    <span class="n">atoms</span><span class="o">=</span><span class="n">mo</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># 1000 K</span>
+    <span class="n">ensemble</span><span class="o">=</span><span class="s1">&#39;nvt&#39;</span><span class="p">,</span>  <span class="c1"># NVT ensemble</span>
+    <span class="n">timestep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="c1"># 1fs,</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="s2">&quot;mo.traj&quot;</span><span class="p">,</span>  <span class="c1"># save trajectory to mo.traj</span>
+    <span class="n">logfile</span><span class="o">=</span><span class="s2">&quot;mo.log&quot;</span><span class="p">,</span>  <span class="c1"># log file for MD</span>
+    <span class="n">loginterval</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># interval for record the log</span>
+<span class="p">)</span>
+
+<span class="n">md</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After the run, <code class="docutils literal notranslate"><span class="pre">mo.log</span></code> contains thermodynamic information similar to the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Time<span class="o">[</span>ps<span class="o">]</span>      Etot<span class="o">[</span>eV<span class="o">]</span>     Epot<span class="o">[</span>eV<span class="o">]</span>     Ekin<span class="o">[</span>eV<span class="o">]</span>    T<span class="o">[</span>K<span class="o">]</span>
+<span class="m">0</span>.0000         -21.3307     -21.3307       <span class="m">0</span>.0000     <span class="m">0</span>.0
+<span class="m">0</span>.1000         -21.3307     -21.3307       <span class="m">0</span>.0000     <span class="m">0</span>.0
+<span class="m">0</span>.2000         -21.2441     -21.3087       <span class="m">0</span>.0645   <span class="m">249</span>.7
+<span class="m">0</span>.3000         -21.0466     -21.2358       <span class="m">0</span>.1891   <span class="m">731</span>.6
+<span class="m">0</span>.4000         -20.9702     -21.1149       <span class="m">0</span>.1447   <span class="m">559</span>.6
+<span class="m">0</span>.5000         -20.9380     -21.1093       <span class="m">0</span>.1713   <span class="m">662</span>.6
+<span class="m">0</span>.6000         -20.9176     -21.1376       <span class="m">0</span>.2200   <span class="m">850</span>.9
+<span class="m">0</span>.7000         -20.9016     -21.1789       <span class="m">0</span>.2773  <span class="m">1072</span>.8
+<span class="m">0</span>.8000         -20.8804     -21.1638       <span class="m">0</span>.2835  <span class="m">1096</span>.4
+<span class="m">0</span>.9000         -20.8770     -21.0695       <span class="m">0</span>.1925   <span class="m">744</span>.5
+<span class="m">1</span>.0000         -20.8908     -21.0772       <span class="m">0</span>.1864   <span class="m">721</span>.2
+</pre></div>
+</div>
+<p>The MD run takes less than 1 minute.</p>
+</section>
+</section>
+<section id="model-training">
+<h1>Model training<a class="headerlink" href="#model-training" title="Permalink to this headline">¶</a></h1>
+<p>You can also train your own IAP using the <code class="docutils literal notranslate"><span class="pre">PotentialTrainer</span></code> in <code class="docutils literal notranslate"><span class="pre">m3gnet.trainers</span></code>. The training dataset can include:</p>
+<ul class="simple">
+<li><p>structures, a list of pymatgen Structures</p></li>
+<li><p>energies, a list of energy floats with unit eV.</p></li>
+<li><p>forces, a list of nx3 force matrix with unit eV/Å, where n is the number of atom in
+each structure. n does not need to be the same for all structures.</p></li>
+<li><p>stresses, a list of 3x3 stress matrices with unit GPa (optional)</p></li>
+</ul>
+<p>For stresses, we use the convention that compressive stress gives negative values. Stresses obtained from
+VASP calculations (default unit is kBar) should be multiplied by -0.1 to work directly with the model.</p>
+<p>We use validation dataset to select the stopping epoch number. The dataset has similar format as the training dataset.</p>
+<p>A minimal example of model training is shown below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">m3gnet.models</span> <span class="kn">import</span> <span class="n">M3GNet</span><span class="p">,</span> <span class="n">Potential</span>
+<span class="kn">from</span> <span class="nn">m3gnet.trainers</span> <span class="kn">import</span> <span class="n">PotentialTrainer</span>
+
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="n">m3gnet</span> <span class="o">=</span> <span class="n">M3GNet</span><span class="p">(</span><span class="n">is_intensive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">potential</span> <span class="o">=</span> <span class="n">Potential</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">m3gnet</span><span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">PotentialTrainer</span><span class="p">(</span>
+    <span class="n">potential</span><span class="o">=</span><span class="n">potential</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">structures</span><span class="p">,</span>
+    <span class="n">energies</span><span class="p">,</span>
+    <span class="n">forces</span><span class="p">,</span>
+    <span class="n">stresses</span><span class="p">,</span>
+    <span class="n">validation_graphs_or_structures</span><span class="o">=</span><span class="n">val_structures</span><span class="p">,</span>
+    <span class="n">val_energies</span><span class="o">=</span><span class="n">val_energies</span><span class="p">,</span>
+    <span class="n">val_forces</span><span class="o">=</span><span class="n">val_forces</span><span class="p">,</span>
+    <span class="n">val_stresses</span><span class="o">=</span><span class="n">val_stresses</span><span class="p">,</span>
+    <span class="n">epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">fit_per_element_offset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_checkpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="matterverse">
+<h1>Matterverse<a class="headerlink" href="#matterverse" title="Permalink to this headline">¶</a></h1>
+<p>As an example of the power of M3GNet for materials discovery, we have created a database of yet-to-be-synthesized
+materials called <a class="reference external" href="https://matterverse.ai">matterverse.ai</a>. At the time of writing, matterverse.ai has 31 million
+structures, of which more than 1 million are predicted to be potentially stable. The initial candidate list was
+generated via combinatorial isovalent ionic substitutions based on the common oxidation states of non-noble-gas elements
+on 5,283 binary, ternary and quaternary structural prototypes in the 2019 version of the ICSD database.</p>
+</section>
+<section id="api-docs">
+<h1>API docs<a class="headerlink" href="#api-docs" title="Permalink to this headline">¶</a></h1>
+<p>The API docs are available <a class="reference external" href="https://materialsvirtuallab.github.io/m3gnet/modules">here</a>.</p>
+</section>
+<section id="datasets">
+<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h1>
+<p>The training data used to develop the universal M3GNet IAP is <code class="docutils literal notranslate"><span class="pre">MPF.2021.2.8</span></code> and is hosted on
+<a class="reference external" href="https://figshare.com/articles/dataset/MPF_2021_2_8/19470599">figshare</a> with DOI <code class="docutils literal notranslate"><span class="pre">10.6084/m9.figshare.19470599</span></code>.</p>
+</section>
+<section id="reference">
+<h1>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h1>
+<p>Please cite the following work:</p>
+<div class="highlight-txt notranslate"><div class="highlight"><pre><span></span>Chi Chen, and Shyue Ping Ong. &quot;A Universal Graph Deep Learning Interatomic Potential for the Periodic Table.&quot;
+arXiv preprint [arXiv:2202.02450](https://arxiv.org/abs/2202.02450) (2022).
+</pre></div>
+</div>
+</section>
+<section id="acknowledgements">
+<h1>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h1>
+<p>This work was primarily supported by the Materials Project, funded by the U.S. Department of Energy, Office of Science,
+Office of Basic Energy Sciences, Materials Sciences and Engineering Division under contract no.
+DE-AC02-05-CH11231: Materials Project program KC23MP. This work used the Expanse supercomputing cluster at the Extreme
+Science and Engineering Discovery Environment (XSEDE), which is supported by National Science Foundation grant number
+ACI-1548562.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">m3gnet</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Chi Chen, Shyue Ping Ong.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
