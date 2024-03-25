@@ -1,0 +1,11 @@
+pytest==7.2.0
+pytest-cov==4.0.0
+coverage==6.5.0
+coveralls==3.3.1
+pycodestyle
+mypy
+pydocstyle
+black
+flake8
+types-tabulate==0.8.3
+pylint

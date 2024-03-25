@@ -1,0 +1,12 @@
+pymatgen
+tensorflow
+numpy
+monty
+sympy
+ase
+
+[model_saving]
+h5py
+
+[tensorflow with gpu]
+tensorflow-gpu>=2.7

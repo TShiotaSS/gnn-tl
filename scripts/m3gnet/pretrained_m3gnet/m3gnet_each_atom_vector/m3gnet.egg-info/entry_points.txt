@@ -1,0 +1,2 @@
+[console_scripts]
+m3g = m3gnet.cli:main
