@@ -20,9 +20,17 @@ Classifier: Topic :: Scientific/Engineering :: Physics
 Classifier: Topic :: Scientific/Engineering :: Chemistry
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Description-Content-Type: text/markdown
-Provides-Extra: model_saving
-Provides-Extra: tensorflow with gpu
 License-File: LICENSE
+Requires-Dist: pymatgen
+Requires-Dist: tensorflow
+Requires-Dist: numpy
+Requires-Dist: monty
+Requires-Dist: sympy
+Requires-Dist: ase
+Provides-Extra: model-saving
+Requires-Dist: h5py; extra == "model-saving"
+Provides-Extra: tensorflow-with-gpu
+Requires-Dist: tensorflow-gpu>=2.7; extra == "tensorflow-with-gpu"
 
 [![GitHub license](https://img.shields.io/github/license/materialsvirtuallab/m3gnet)](https://github.com/materialsvirtuallab/m3gnet/blob/main/LICENSE)
 [![Linting](https://github.com/materialsvirtuallab/m3gnet/workflows/Linting/badge.svg)](https://github.com/materialsvirtuallab/m3gnet/workflows/Linting/badge.svg)
