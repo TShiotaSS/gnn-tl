@@ -15,6 +15,6 @@ The train data and test data are hosted on figshare.
 
 # Reference 
 
-> T. Shiota, K. Ishihara, W. Mizukami, Universal neural network potentials as descriptors: Towards scalable chemical property prediction using quantum and classical computers,<br>arXiv:2402.18433](https://arxiv.org/abs/2402.18433) [quant-ph]
+> T. Shiota, K. Ishihara, W. Mizukami, Universal neural network potentials as descriptors: Towards scalable chemical property prediction using quantum and classical computers,[<br>arXiv:2402.18433](https://arxiv.org/abs/2402.18433) [quant-ph]
 
 
