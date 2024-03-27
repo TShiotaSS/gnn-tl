@@ -10,7 +10,7 @@ Execute the following command in the directory where docker-compose.yml is locat
 A docker image will be created, referring to the Dockerfile.
 ```
 docker-compose build
-``` docker-compose build
+```
 
 Run the following command in the directory containing docker-compose.yml.
 ```
