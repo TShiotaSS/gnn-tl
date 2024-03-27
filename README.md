@@ -6,7 +6,23 @@ For more details on the methodology, please refer to the reference section.
 
 # Installing via Docker
 
+Execute the following command in the directory where docker-compose.yml is located.
+A docker image will be created, referring to the Dockerfile.
+```
+docker-compose build
+``` docker-compose build
+
+Run the following command in the directory containing docker-compose.yml.
+```
+docker-compose up
+```
+
+# Example 
+
+Please refer to the notebook in the /gnn_tf/example.
+
 # Requirements
+
 
 # Datasets
 The train data and test data are hosted on figshare.
