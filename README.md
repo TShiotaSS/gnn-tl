@@ -6,6 +6,8 @@ For more details on the methodology, please refer to the reference section.
 
 # Installing via Docker
 
+We provide a user-friendly container environment with Docker and Jupyter Lab to avoid cumbersome dependencies and environment construction costs.
+
 Execute the following command in the directory where docker-compose.yml is located.
 A docker image will be created, referring to the Dockerfile.
 ```
