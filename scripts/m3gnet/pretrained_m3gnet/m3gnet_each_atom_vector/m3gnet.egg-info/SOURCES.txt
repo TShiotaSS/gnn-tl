@@ -56,6 +56,7 @@ m3gnet/models/__init__.py
 m3gnet/models/_base.py
 m3gnet/models/_dynamics.py
 m3gnet/models/_m3gnet.py
+m3gnet/models/MP-2021.2.8-EFS/m3gnet.json
 m3gnet/models/tests/test_model.py
 m3gnet/trainers/__init__.py
 m3gnet/trainers/_metrics.py

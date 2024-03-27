@@ -48,15 +48,7 @@ RUN pip install --upgrade pip \
     japanize-matplotlib \
     mlxtend \
     seaborn \
-    plotly \
-    requests \
-    beautifulsoup4 \
-    Pillow \
-    pytest \
-    poetry \
-    lmdb \
-    opencv-python \
-    openpyxl
+    plotly
 
 RUN pip install --upgrade pip \
 &&  pip install --no-cache-dir \
@@ -67,4 +59,13 @@ RUN pip install --upgrade pip \
 &&  pip install --no-cache-dir \
     openbabel
 
-RUN 
+RUN pip install --upgrade pip \
+&&  pip install --no-cache-dir \
+    scikit-learn==1.2.2 \
+    optuna==3.3.0
+
+RUN pip install --upgrade pip \
+&&  pip install --no-cache-dir \
+    skqulacs==0.5.0 \
+    qulacs==0.5.6 \
+    numpy==1.24.4

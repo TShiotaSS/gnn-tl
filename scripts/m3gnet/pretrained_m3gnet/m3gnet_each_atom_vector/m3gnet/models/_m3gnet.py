@@ -186,13 +186,6 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
             )
             self.graph_layers.append(layer)
 
-            ## ここまでで、グラフコンボリューションが終了している。あとは出力情報に応じて全結合層を組んでいる。と思う。
-
-        # トレースのための確認
-        # print('★★')
-        # print(is_intensive)
-        # print(readout)
-        print(f"units:{units}")
         if is_intensive:
             if readout == "set2set":
                 atom_readout = Set2Set(units=units, num_steps=2, field="atoms")
@@ -208,12 +201,10 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
 
             self.final = Pipe(layers=[readout_nn, mlp])
         
-        # エネルギーはこっち
         else:
             if task_type == "classification":
                 raise ValueError("Classification task cannot be extensive")
             final_layers = []
-            print(f"unit:{units}")
             if include_states:
                 final_layers.append(
                     GraphNetworkLayer(atom_network=GatedAtomUpdate(neurons=[units], activation="swish"))
@@ -230,8 +221,6 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
                     )
                 )
             )
-            # このfinal_layersのReduceReadOut層でエネルギーの合計値を計算している。
-            # ということはこの一つ前で、各原子のエネルギーが出ている。
             final_layers.append(ReduceReadOut(method="sum", field="atoms"))
             self.final = Pipe(layers=final_layers)
 
@@ -264,16 +253,6 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
 
         """
 
-        # GNNで情報を変換する前にデータを出力する。
-        # print('★★')
-        # print(len(graph))
-        # print(f"atoms:{graph[0]}")
-        # print(graph[1])
-        # print(graph[2])
-        # print(f"posi:{graph[3]}")
-        # print('★★')
-
-
         graph = tf_compute_distance_angle(graph)
         property_offset, ref_energy_array = self.element_ref_calc(graph)
         three_basis = self.basis_expansion(graph)
@@ -281,70 +260,25 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
         g = self.featurizer(graph)
         g = self.feature_adjust(g)
         for i in range(self.n_blocks):
-            print(f"block{i+1}回目")
             g = self.three_interactions[i](g, three_basis, three_cutoff)
             g = self.graph_layers[i](g)
 
-        
-        ## ここで各原子の特徴ベクトルを取得する。
-        ## 
         atoms_vector = g[Index.ATOMS]
-        print("gのATOMS情報")
-        print(g[Index.ATOMS][0])
-        print("graphのATOMS情報。これは徐の徐の原子番号しか格納されていない。")
-        print(graph[Index.ATOMS])
 
-
-
-        print('ここからエネルギー------')
-        # print(graph[Index.ATOM_POSITIONS])
-        # print(graph[Index.ATOMS])
-        # print('------')
         g, diff_energy_array = self.final(g)
-        print(graph[Index.N_ATOMS][0])
-        print(f'std:{self.std} type:{type(self.std)}')
-        # 標準化した状態から元の状態に戻してる。そもそもGNNを通って出てきたdiff_Eが標準化されているという仮定はどこから来たのだろう。謎。
         g = g * self.std + self.mean
-        # print(f'1個前のg:{g}')
         g += property_offset
-        # print(property_offset)
-        # print(f'g:{g}, type{type(g)}')
-        # print(g[0])
-
-        # 原子エネルギーをnp.arrayで算出
+        # calc each atom energy
         energy_array = ref_energy_array + diff_energy_array*self.std + self.mean
-        print(energy_array)
-        print(np.sum(energy_array))
 
-        # dataframe作成
-        # self.unitsがatom_embedding_dimなので。
         columns = ['atomic_number', 'x', 'y', 'z', 'energy']
         atom_vector = [f"atom_feature_vector_{i+1}" for i in range(self.units)]
         columns.extend(atom_vector)
-        print(columns)
-        print(energy_array)
-
-        print(atoms_vector)
-        print(self.units)
-
         d = np.concatenate([graph[Index.ATOMS],graph[Index.ATOM_POSITIONS], energy_array, atoms_vector], axis=1)
         df = pd.DataFrame(data=d, columns=columns)
-        # print(f'each_atoms_energy:{field}')
-        # print(f'n_field:{n_field}')
-        # print(get_segment_indices_from_n(n_field))
         path = os.getcwd()
+        # save each atom energy in cwd
         df.to_csv(f'{path}/each_atom_energy.csv')
-
-        # dataframe作成
-        # columns = [,'mean', 'std']
-        # d = np.concatenate([self.mean]*graph[Index.N_ATOMS][0].numpy(), [self.std]*graph[Index.N_ATOMS][0].numpy(), axis=1)
-        # df = pd.DataFrame(data=np.array([self.mean,self.std]*graph[Index.N_ATOMS][0].numpy()).reshape(-1,2), columns=columns)
-        # print(f'each_atoms_energy:{field}')
-        # print(f'n_field:{n_field}')
-        # print(get_segment_indices_from_n(n_field))
-        # path = os.getcwd()
-        # df.to_csv(f'{path}/each_atom_mean_std.csv')
-
 
         return g
 

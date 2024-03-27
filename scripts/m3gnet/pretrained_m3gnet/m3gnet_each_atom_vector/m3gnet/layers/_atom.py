@@ -95,9 +95,6 @@ class GatedAtomUpdate(AtomNetwork):
             graph[Index.BOND_ATOM_INDICES][:, 0],
             num_segments=tf.shape(graph[Index.ATOMS])[0],
         )
-        print("★update_atoms★")
-        print(graph[Index.ATOMS] + c)
-        print("★update_atoms★終わり")
         return graph[Index.ATOMS] + c
 
     def get_config(self) -> dict:

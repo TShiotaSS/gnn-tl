@@ -135,34 +135,18 @@ class ReduceReadOut(ReadOut):
         """
         field = graph[getattr(Index, self.field.upper())]
         n_field = graph[getattr(Index, f"n_{self.field}".upper())]
-        # print('実験')
-        # print(Index)
-        # print(Index.ATOM_POSITIONS)
-        # print(graph[Index.ATOM_POSITIONS])
-        print('readout')
-        print(graph[Index.ATOMS])
-        print('readout')
-        # print(graph)
-
         
-        # dataframe作成
+        # building dataframe
         columns = ['x', 'y', 'z', 'diff_energy']
         d = np.concatenate([graph[Index.ATOM_POSITIONS], graph[Index.ATOMS]], axis=1)
         df = pd.DataFrame(data=d, columns=columns)
-        # print(f'each_atoms_energy:{field}')
-        # print(f'n_field:{n_field}')
-        # print(get_segment_indices_from_n(n_field))
         path = os.getcwd()
-        # df.to_csv(f'{path}/each_atom_diff_energy.csv')
 
-        print(f'return:{self.method_func( field, get_segment_indices_from_n(n_field),num_segments=tf.shape(n_field)[0],)}')
         return self.method_func(  # type: ignore
             field, # data
-            get_segment_indices_from_n(n_field), # segment_ids　全部0
-            num_segments=tf.shape(n_field)[0], # 1となる
+            get_segment_indices_from_n(n_field), # segment_ids
+            num_segments=tf.shape(n_field)[0], # 1
         ), np.array(graph[Index.ATOMS])
-        # つまりただ単純にfieldに格納された数値の和を取っているだけ。
-        # ↑tf.math.unsorted_segment_sumが起動。
 
 
     def get_config(self) -> dict:
@@ -276,8 +260,6 @@ class WeightedReadout(ReadOut):
         indices = get_segment_indices_from_n(n_field)
         n_structs = tf.shape(n_field)[0]
         factor = unsorted_segment_fraction(weights[:, 0], indices, num_segments=n_structs)
-        print('★★★★★★★★★★★★★★★★★★★★★')
-        # print(tf.math.segment_sum(factor[:, None] * updated_field, indices))
         return tf.math.segment_sum(factor[:, None] * updated_field, indices)
 
     def get_config(self):

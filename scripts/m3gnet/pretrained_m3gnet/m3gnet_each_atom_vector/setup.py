@@ -25,8 +25,8 @@ setup(
     version=version,
     install_requires=[
         "pymatgen",
-        "tensorflow",
-        "numpy",
+        "tensorflow==2.8.4",
+        "numpy==1.24.4",
         "monty",
         "sympy",
         "ase",

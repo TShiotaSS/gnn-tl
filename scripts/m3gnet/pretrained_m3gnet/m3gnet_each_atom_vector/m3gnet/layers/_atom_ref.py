@@ -139,7 +139,6 @@ class AtomRef(BaseAtomRef):
         features = self._get_feature_matrix(structs_or_graphs)
         return features.dot(self.property_per_element)
 
-# ただ、modelのm3gnet.jsonの数値を持ってきているだけ。
     def call(self, graph: List, **kwargs):
         """
         Args:
@@ -148,30 +147,15 @@ class AtomRef(BaseAtomRef):
         Returns:
         """        
         atomic_numbers = graph[Index.ATOMS][:, 0]
-        # print(f'atomic_numbersのlen:{len(atomic_numbers)}')
-        # print(f'atomic_numbers:{atomic_numbers}, type:{type(atomic_numbers)}')
         atom_energies = tf.gather(tf.cast(self.property_per_element, DataType.tf_float), atomic_numbers)
-        # print(f"atom_energies:{atom_energies}, type:{type(atom_energies)}")
-        # print(f"atom_energies:{atom_energies[0]}, type:{type(atom_energies[0])}")
         res = tf.math.segment_sum(atom_energies, get_segment_indices_from_n(graph[Index.N_ATOMS]))
-        # print(get_segment_indices_from_n(graph[Index.N_ATOMS]))
-        # print(f"res:{res}, type:{type(res)}")
 
-        # print(atomic_numbers.shape)
-        # print(atom_energies.shape)
-
-        # dataframe作成
-        columns = ['atomic_number','x', 'y', 'z', 'ref_energy']
-        # columns = ['atomic_number','x', 'y', 'z']
-        d = np.concatenate([tf.reshape(atomic_numbers,[-1,1]),graph[Index.ATOM_POSITIONS] ,tf.reshape(atom_energies,[-1,1])] ,axis=1)
-        # d = np.concatenate([graph[Index.ATOMS], graph[Index.ATOM_POSITIONS]] ,axis=1)
-        # df = pd.DataFrame(data=atom_energies, columns=['ref_energy'])
-        df = pd.DataFrame(data=d, columns=columns)
-        # print(f'each_atoms_energy:{field}')
-        # print(f'n_field:{n_field}')
-        # print(get_segment_indices_from_n(n_field))
-        path = os.getcwd()
-        # df.to_csv(f'{path}/each_atom_ref_energy.csv')
+        ### Arranging part ###
+        # building dataframe
+        # columns = ['atomic_number','x', 'y', 'z', 'ref_energy']
+        # d = np.concatenate([tf.reshape(atomic_numbers,[-1,1]),graph[Index.ATOM_POSITIONS] ,tf.reshape(atom_energies,[-1,1])] ,axis=1)
+        # df = pd.DataFrame(data=d, columns=columns)
+        # path = os.getcwd()
     
         return tf.reshape(res, (-1, 1)), np.array(tf.reshape(atom_energies,[-1,1]))
 

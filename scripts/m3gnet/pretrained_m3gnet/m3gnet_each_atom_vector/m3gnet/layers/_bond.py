@@ -44,9 +44,6 @@ class BondNetwork(GraphUpdate):
         graph = graph[:]
         bonds = self.update_bonds(graph)
         graph[Index.BONDS] = bonds
-        print("★bond★")
-        print(graph)
-        print("★bond★終わり")
         return graph
 
 

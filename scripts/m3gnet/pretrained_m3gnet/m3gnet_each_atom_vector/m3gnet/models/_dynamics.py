@@ -82,19 +82,9 @@ class M3GNetCalculator(Calculator):
         super().calculate(atoms=atoms, properties=properties, system_changes=system_changes)
 
         graph = self.potential.graph_converter(atoms)
-
-        # こうやってmaterial graphクラスからは変数を取り出す。
-        print("-----------------------")
-        print(f"graph:{graph.atoms}")
-        print(f"graph:{graph.atom_positions}")
-        print("-----------------------")
         
-        # ここでリストにしているんだ。
         graph_list = graph.as_tf().as_list()
-        # print(f"graph_list:{graph_list}")
         results = self.potential.get_efs_tensor(graph_list, include_stresses=self.compute_stress)
-        # 追加
-        # print(f"energies:{self.potential.get_energies(graph_list)}")
 
         self.results.update(
             energy=results[0].numpy().ravel()[0],

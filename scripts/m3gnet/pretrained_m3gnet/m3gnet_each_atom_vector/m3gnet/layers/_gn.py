@@ -40,11 +40,8 @@ class GraphNetworkLayer(GraphUpdate):
         self.bond_network = bond_network or GraphUpdate()
         self.atom_network = atom_network or GraphUpdate()
         self.state_network = state_network or GraphUpdate()
-        print("super_initはじめ")
         super().__init__(**kwargs)
-        print("super_init終わり")
 
-    ## bond→atom→stateという順番に更新
     def call(self, graph: List, **kwargs) -> List:
         """
         Args:
@@ -53,9 +50,6 @@ class GraphNetworkLayer(GraphUpdate):
         Returns: tf.Tensor
         """
         out = self.state_network(self.atom_network(self.bond_network(graph)))
-        print("*****************************")
-        print(out)
-        print("*****************************")
         return out
 
     def get_config(self) -> dict:

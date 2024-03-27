@@ -22,8 +22,8 @@ Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: pymatgen
-Requires-Dist: tensorflow
-Requires-Dist: numpy
+Requires-Dist: tensorflow==2.8.4
+Requires-Dist: numpy==1.24.4
 Requires-Dist: monty
 Requires-Dist: sympy
 Requires-Dist: ase
