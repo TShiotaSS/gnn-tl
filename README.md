@@ -19,6 +19,11 @@ Run the following command in the directory containing docker-compose.yml.
 docker-compose up
 ```
 
+Then, run the following command in some browser. you can connect to the Docker container through Jupyter Lab. The settings are in docker-compose.yml.
+```
+http://localhost:18080
+``` 
+
 # Tutorial 
 
 Please refer to the notebook in the /gnn_tf/example.
