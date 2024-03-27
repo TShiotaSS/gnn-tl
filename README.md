@@ -17,7 +17,7 @@ Run the following command in the directory containing docker-compose.yml.
 docker-compose up
 ```
 
-# Example 
+# Tutorial 
 
 Please refer to the notebook in the /gnn_tf/example.
 
