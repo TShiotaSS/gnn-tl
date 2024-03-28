@@ -68,3 +68,5 @@ RUN pip install --upgrade pip \
     # skqulacs==0.5.0 \
     qulacs==0.5.6 \
     numpy==1.24.4
+
+COPY times.ttf /usr/local/lib/python3.9/dist-packages/matplotlib/mpl-data/fonts/ttf/
