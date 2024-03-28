@@ -278,7 +278,7 @@ class M3GNet(GraphModelMixin, tf.keras.models.Model):
         df = pd.DataFrame(data=d, columns=columns)
         path = os.getcwd()
         # save each atom energy in cwd
-        df.to_csv(f'{path}/each_atom_energy.csv')
+        df.to_csv(f'{path}/each_atom_descriptor.csv')
 
         return g
 
