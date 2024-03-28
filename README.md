@@ -26,7 +26,7 @@ http://localhost:18080
 
 # Tutorial 
 
-Please refer to the notebook in the /gnn_tf/example.
+Please refer to the notebook in the /gnn_tf/tutorial.
 
 # Requirements
 
