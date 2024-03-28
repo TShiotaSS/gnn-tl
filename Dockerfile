@@ -17,7 +17,6 @@ RUN ln -nfs python3 python && \
     ln -nfs python3.9 python3 && \
     ln -nfs python3.9-config python3-config
 
-
 WORKDIR /
 
 # openbabel
@@ -66,6 +65,6 @@ RUN pip install --upgrade pip \
 
 RUN pip install --upgrade pip \
 &&  pip install --no-cache-dir \
-    skqulacs==0.5.0 \
+    # skqulacs==0.5.0 \
     qulacs==0.5.6 \
     numpy==1.24.4
