@@ -1,6 +1,6 @@
 # gnn_tf
 
-This library provides a platform for using trained NNP graph neural networks as descriptors. 
+This environment provides a platform for using trained NNP graph neural networks as descriptors. 
 
 For more details on the methodology, please refer to the reference section.
 
