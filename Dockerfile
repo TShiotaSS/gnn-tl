@@ -33,7 +33,6 @@ RUN pip install --upgrade pip \
     black \
     nb_black \
     jupyterlab==3.6.5 \
-    jupyterlab-git \
     lckr-jupyterlab-variableinspector \
     ypy-websocket==0.8.2 \
     jupyterlab_widgets==1.1.4 \
