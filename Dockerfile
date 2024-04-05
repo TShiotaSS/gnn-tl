@@ -31,8 +31,8 @@ RUN ln -s /usr/include/openbabel3 /usr/local/include/openbabel3
 RUN pip install --upgrade pip \
 &&  pip install --no-cache-dir \
     black \
+    nb_black \
     jupyterlab==3.6.5 \
-    jupyterlab_code_formatter \
     jupyterlab-git \
     lckr-jupyterlab-variableinspector \
     ypy-websocket==0.8.2 \
