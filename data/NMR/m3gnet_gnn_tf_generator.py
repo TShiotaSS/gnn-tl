@@ -12,11 +12,10 @@ from pymatgen.core import Lattice, Structure
 from m3gnet.models import M3GNet, M3GNetCalculator, Potential
 
 import random
-import os 
+import os
 import sys
 
-# Cのレコード(831925)のみのcsvを作成する。
-if __name__ == "__main__": 
+if __name__ == "__main__":
 
     # Reading NMR values
     with open("./data/SI_DFT_NMR.txt") as f:
@@ -26,13 +25,13 @@ if __name__ == "__main__":
     for i, row in enumerate(lines):
         if row.isnumeric():
             element_num = int(row)
-            dsgdb_id = lines[i+1]
-            nmr_rows = lines[i+2:i+2+element_num]
+            dsgdb_id = lines[i + 1]
+            nmr_rows = lines[i + 2 : i + 2 + element_num]
             nmr_list = [s.split()[1] for s in nmr_rows]
             nmr_dict[dsgdb_id] = nmr_list
 
     # Reading atoms geometry file
-    xyz = XYZ.from_file('./data/SI_DFT_geo.xyz')
+    xyz = XYZ.from_file("./data/SI_DFT_geo.xyz")
     all_mols = xyz.all_molecules
     total_num = 130831
     dsgdb_list = list(nmr_dict.keys())
@@ -54,7 +53,7 @@ if __name__ == "__main__":
     for i, mol in enumerate(all_mols):
 
         # Creating atoms descriptor by m3gnet
-        ase_mol = AseAtomsAdaptor.get_atoms(mol)        
+        ase_mol = AseAtomsAdaptor.get_atoms(mol)
         ase_mol.set_calculator(calculator)
         ase_mol.get_potential_energy()
 
@@ -67,22 +66,22 @@ if __name__ == "__main__":
         # Reading atoms descriptor of m3gnet(the name is each_atom_energy.csv)
         df_temp = pd.DataFrame()
         df_temp = pd.read_csv("./each_atom_energy.csv")
-        df_temp.insert(1,"nmr_shift", nmr_list)
-        df_temp.insert(1,"dsgdb_idx", dsgdb_idx)
-        df_temp.insert(1,"molcule_formula", molecule_formula)
+        df_temp.insert(1, "nmr_shift", nmr_list)
+        df_temp.insert(1, "dsgdb_idx", dsgdb_idx)
+        df_temp.insert(1, "molcule_formula", molecule_formula)
 
         # Adding atoms infomation and descriptor
         df_total = pd.concat([df_total, df_temp], axis=0)
 
     # Splitting into element type
-    df_total_C = df_total[df_total["atomic_number"]==6.0]
-    df_total_H = df_total[df_total["atomic_number"]==1.0]
-    df_total_N = df_total[df_total["atomic_number"]==7.0]
-    df_total_O = df_total[df_total["atomic_number"]==8.0]
-    df_total_F = df_total[df_total["atomic_number"]==9.0]
+    df_total_C = df_total[df_total["atomic_number"] == 6.0]
+    df_total_H = df_total[df_total["atomic_number"] == 1.0]
+    df_total_N = df_total[df_total["atomic_number"] == 7.0]
+    df_total_O = df_total[df_total["atomic_number"] == 8.0]
+    df_total_F = df_total[df_total["atomic_number"] == 9.0]
 
     print("---------------------------")
-    print(f"Whole record:{len(df_total)}")    
+    print(f"Whole record:{len(df_total)}")
     print(f"C total record:{len(df_total_C)}")
     print(f"H total record:{len(df_total_H)}")
     print(f"N total record:{len(df_total_N)}")

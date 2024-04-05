@@ -26,10 +26,10 @@ http://localhost:18080
 
 # Tutorial 
 
-Please refer to the notebook in the /gnn_tf/tutorial.
+Please refer to the notebook in the [/gnn_tf/tutorial](https://github.com/TShiotaSS/gnn_tf/blob/main/tutorial/1_generate_m3gnet_descriptor/m3gnet_gnntf_generator.ipynb).
 
 # Requirements
-
+- Python >= 3.9
 
 # Datasets
 The train data and test data are hosted on figshare.
