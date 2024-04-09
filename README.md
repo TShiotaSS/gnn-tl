@@ -44,4 +44,4 @@ The train data and test data are hosted on figshare.
 
 > scikit-qulacs: https://github.com/Qulacs-Osaka/scikit-qulacs 
 
-> A Gupta, S. Chakraborty and R. Ramakrishnan, Mach. Learn.: Sci. Technol. 2 035010 (2021)
+> A Gupta, S. Chakraborty and R. Ramakrishnan, Revving up $^{13}$C NMR shielding predictions across chemical space: benchmarks for atoms-in-molecules kernel machine learning with new data for 134 kilo molecules, Mach. Learn.: Sci. Technol. 2 035010 (2021)
