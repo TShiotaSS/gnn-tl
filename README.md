@@ -2,6 +2,8 @@
 
 This environment provides a platform for using trained NNP graph neural networks as descriptors. 
 
+As a typical example, we provide a predictive model of NMR chemical shifts using the universal M3GNet GNN as a descriptor.
+
 For more details on the methodology, please refer to the reference section.
 
 # Installing via Docker
@@ -38,4 +40,6 @@ The train data and test data are hosted on figshare.
 
 > T. Shiota, K. Ishihara, W. Mizukami, Universal neural network potentials as descriptors: Towards scalable chemical property prediction using quantum and classical computers,[<br>arXiv:2402.18433](https://arxiv.org/abs/2402.18433) [quant-ph]
 
+> Chen, C., Ong, S.P. A universal graph deep learning interatomic potential for the periodic table. Nat Comput Sci 2, 718–728 (2022). https://doi.org/10.1038/s43588-022-00349-3.
 
+> scikit-qulacs: https://github.com/Qulacs-Osaka/scikit-qulacs 
