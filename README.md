@@ -35,7 +35,7 @@ Please refer to the notebook in the [/gnn_tf/tutorial](https://github.com/TShiot
 
 # Datasets
 The train data and test data are hosted on figshare.
-- [qm9nmr training and test dataset](https://figshare.com/articles/dataset/M3GNet_descriptors_for_organic_molecules_in_QM9NMR_dataset/25484068)
+- [M3GNet descriptors for organic molecules in QM9NMR dataset](https://figshare.com/articles/dataset/M3GNet_descriptors_for_organic_molecules_in_QM9NMR_dataset/25484068)
 # Reference 
 
 > T. Shiota, K. Ishihara, W. Mizukami, Universal neural network potentials as descriptors: Towards scalable chemical property prediction using quantum and classical computers,[<br>arXiv:2402.18433](https://arxiv.org/abs/2402.18433) [quant-ph]
@@ -43,3 +43,5 @@ The train data and test data are hosted on figshare.
 > Chen, C., Ong, S.P. A universal graph deep learning interatomic potential for the periodic table. Nat Comput Sci 2, 718–728 (2022). https://doi.org/10.1038/s43588-022-00349-3.
 
 > scikit-qulacs: https://github.com/Qulacs-Osaka/scikit-qulacs 
+
+> A Gupta, S. Chakraborty and R. Ramakrishnan, Mach. Learn.: Sci. Technol. 2 035010 (2021)
