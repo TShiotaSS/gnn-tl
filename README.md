@@ -1,4 +1,4 @@
-# gnn_tf
+# gnn-tl
 
 This environment provides a platform for using trained NNP graph neural networks as descriptors. 
 
@@ -28,7 +28,7 @@ http://localhost:18080
 
 # Tutorial 
 
-Please refer to the notebook in the [/gnn_tf/tutorial](https://github.com/TShiotaSS/gnn_tf/blob/main/tutorial/1_generate_m3gnet_descriptor/m3gnet_gnntf_generator.ipynb).
+Please refer to the notebook in the [/gnn_tl/tutorial](https://github.com/TShiotaSS/gnn_tf/blob/main/tutorial/1_generate_m3gnet_descriptor/m3gnet_gnntf_generator.ipynb).
 
 # Requirements
 - Python >= 3.9
